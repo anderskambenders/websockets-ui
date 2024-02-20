@@ -7,6 +7,10 @@ class memoryDB {
     this._db = [];
   }
 
+  get users() {
+    return this._db;
+  }
+
   addUser = ({ name, password }: RequestData) => {
     const user = { name, password };
     this._db.push(user);

@@ -9,6 +9,11 @@ export class RegService {
     this.db = db;
   }
 
+  isValidUser = ({ name, password }: { name: string; password: string }) => {
+    const user = this.db.users.find((user) => user.name === name);
+    return user?.password === password;
+  };
+
   createUser = ({ type, data, id }: RequestResponse) => {
     const userData: RequestData = JSON.parse(data);
     const index = this.db.addUser(userData);
