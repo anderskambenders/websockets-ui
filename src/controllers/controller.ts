@@ -4,7 +4,7 @@ import Registration from './registration';
 import { RoomsService } from './rooms/rooms';
 import type { WebSocket } from 'ws';
 
-export class Services {
+class Controller {
   private registration: Registration;
   private rooms: RoomsService;
 
@@ -33,3 +33,5 @@ export class Services {
     return res;
   };
 }
+
+export default Controller;

@@ -1,7 +1,7 @@
 import WebSocket, { WebSocketServer } from 'ws';
 import { createServer } from 'http';
 import { Request } from '../types/types';
-import { Services } from '../components/services';
+import Controller from '../controllers/controller';
 import memoryDB from '../memory-database/memoryDB';
 import { handleRequest } from '../request-handler/handleRequest';
 import { deleteUser } from '../request-handler/deleteUser';
@@ -11,7 +11,7 @@ const startWebSocketServer = () => {
 
   const wss = new WebSocketServer({ server });
   const db = memoryDB.memoryDB;
-  const services = new Services(db);
+  const services = new Controller(db);
   const controller = services.createRoutes();
 
   wss.on('connection', function connection(ws) {
