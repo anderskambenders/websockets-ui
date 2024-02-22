@@ -1,33 +1,52 @@
 import memoryDB from '../memory-database/memoryDB';
-import { RequestResponse } from '../types/types';
-import { RequestData } from '../types/types';
+import { Request } from '../types/types';
+import { RegistrationData } from '../types/types';
+import type { RoomsService } from './rooms/rooms';
+import type { WebSocket } from 'ws';
 
-export class RegService {
-  db: memoryDB;
+class Registration {
+  private db: memoryDB;
+  private rooms: RoomsService;
 
-  constructor(db: memoryDB) {
+  constructor(db: memoryDB, rooms: RoomsService) {
     this.db = db;
+    this.rooms = rooms;
   }
 
-  isValidUser = ({ name, password }: { name: string; password: string }) => {
-    const user = this.db.users.find((user) => user.name === name);
-    return user?.password === password;
+  isValidUser = ({ name, password }: RegistrationData) => {
+    const users = Array.from(this.db.getAllUsers());
+    const user = users.find((user) => user.name === name);
+    return user ? user.password === password : true;
   };
 
-  createUser = ({ type, data, id }: RequestResponse) => {
-    const userData: RequestData = JSON.parse(data);
-    const index = this.db.addUser(userData);
-    const resData = {
+  registerUser = (req: Request, ws: WebSocket) => {
+    const user = this.createUser(req, ws);
+    const responses: Request[] = [user];
+    const size = this.rooms.getSize();
+    console.log(req, ws);
+    if (size) {
+      responses.push(this.rooms.updateRoom());
+    }
+    const result = [{ ws, responses }];
+    return result;
+  };
+
+  createUser = ({ type, data, id }: Request, ws: WebSocket) => {
+    const userData: RegistrationData = JSON.parse(data);
+    const responseData = {
       name: userData.name,
-      index,
-      error: false,
-      errorText: '',
+      index: this.isValidUser(userData) ? this.db.addUser(ws, userData) : -1,
+      error: !this.isValidUser(userData),
+      errorText: this.isValidUser(userData)
+        ? ''
+        : 'User already exist. Invalid password',
     };
-    const response: RequestResponse = {
+    return {
       type,
       id,
-      data: JSON.stringify(resData),
+      data: JSON.stringify(responseData),
     };
-    return response;
   };
 }
+
+export default Registration;

@@ -1,22 +1,45 @@
-import { WebSocketServer } from 'ws';
+import WebSocket, { WebSocketServer } from 'ws';
 import { createServer } from 'http';
-import Controller from '../controller/Controller';
+import { Request } from '../types/types';
+import { Services } from '../components/services';
+import memoryDB from '../memory-database/memoryDB';
+import { handleRequest } from '../request-handler/handleRequest';
+import { deleteUser } from '../request-handler/deleteUser';
 
-const startWebsocketServer = () => {
-  const controller = new Controller();
+const startWebSocketServer = () => {
   const server = createServer();
-  const webSocketServer = new WebSocketServer({ server });
-  webSocketServer.on('connection', (ws) => {
+
+  const wss = new WebSocketServer({ server });
+  const db = memoryDB.memoryDB;
+  const services = new Services(db);
+  const controller = services.createRoutes();
+
+  wss.on('connection', function connection(ws) {
     ws.on('error', console.error);
+    ws.on('close', () => deleteUser(ws, db));
     ws.on('message', async (data) => {
-      // console.log('received: %s', data);
+      console.log('received: %s', data);
       try {
-        const req = JSON.parse(data.toString());
-        const handler = controller.getHandler(req.type);
+        const request: Request = JSON.parse(data.toString());
+        const handler = handleRequest(request.type, controller);
 
         if (handler) {
-          const resp = handler(req);
-          ws.send(JSON.stringify(resp));
+          const WSResponses = await handler(request, ws);
+          console.log(request, this);
+
+          WSResponses.forEach(
+            (wsWithResponse: { ws: WebSocket; responses: Request[] }) => {
+              wsWithResponse.responses.forEach((response) => {
+                const ws = wsWithResponse.ws;
+                const stringResponse = JSON.stringify(response);
+                ws.send(stringResponse, () =>
+                  console.log(
+                    `Command: ${response.type}, result:${stringResponse}`
+                  )
+                );
+              });
+            }
+          );
         } else {
           console.error('Wrong type');
         }
@@ -25,7 +48,8 @@ const startWebsocketServer = () => {
       }
     });
   });
+
   return server;
 };
 
-export default startWebsocketServer;
+export default startWebSocketServer;

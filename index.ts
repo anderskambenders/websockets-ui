@@ -8,7 +8,14 @@ console.log(`Start static http server on the ${HTTP_PORT} port!`);
 httpServer.listen(HTTP_PORT);
 
 const wsServer = startWebsocketServer();
-wsServer.listen(
-  WEBSOCKET_PORT,
-  () => `Web socket server started on the ${WEBSOCKET_PORT} port!`
-);
+wsServer.listen(WEBSOCKET_PORT, () => {
+  const serverInfo = wsServer.address();
+  if (serverInfo && typeof serverInfo !== 'string') {
+    console.log(
+      `WS server info:
+      Address - ${serverInfo.address}
+      Port - ${serverInfo.port}
+      Protocol version - ${serverInfo.family}`
+    );
+  }
+});

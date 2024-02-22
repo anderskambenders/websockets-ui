@@ -1,17 +1,35 @@
 import memoryDB from '../memory-database/memoryDB';
-import { RegService } from './registration';
-import { RequestResponse } from '../types/types';
+import { Request } from '../types/types';
+import Registration from './registration';
+import { RoomsService } from './rooms/rooms';
+import type { WebSocket } from 'ws';
 
 export class Services {
-  db;
-  reg;
-  routes;
+  private registration: Registration;
+  private rooms: RoomsService;
 
-  constructor() {
-    this.db = new memoryDB();
-    this.reg = new RegService(this.db);
-    this.routes = {
-      reg: (req: RequestResponse) => this.reg.createUser(req),
-    };
+  constructor(db: memoryDB) {
+    this.rooms = new RoomsService(db);
+    this.registration = new Registration(db, this.rooms);
   }
+
+  createRoutes = () => {
+    const routes = [
+      [
+        'reg',
+        (req: Request, ws: WebSocket) =>
+          this.registration.registerUser(req, ws),
+      ],
+      [
+        'create_room',
+        (req: Request, ws: WebSocket) => this.rooms.createRoom(req, ws),
+      ],
+    ];
+
+    const res = new Map();
+    routes.forEach((val) => {
+      res.set(val[0], val[1]);
+    });
+    return res;
+  };
 }
