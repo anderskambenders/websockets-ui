@@ -33,6 +33,14 @@ class memoryDB {
     return this.db.values();
   };
 
+  incrementUserWins = (ws: WebSocket) => {
+    const user = this.getUser(ws);
+
+    if (user) {
+      user.wins++;
+    }
+  };
+
   static get memoryDB() {
     if (!memoryDB.instance) {
       memoryDB.instance = new memoryDB();

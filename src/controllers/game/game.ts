@@ -3,6 +3,7 @@ import { Request } from '../../types/types';
 import Ship from '../ships';
 import { ShipsRequest } from '../../types/types';
 import type { HandlerReturnType } from '../../types/types';
+import memoryDB from '../../memory-database/memoryDB';
 
 class Game {
   private id: number;
@@ -31,6 +32,28 @@ class Game {
     ]);
     this.turn = Math.random() > 0.5 ? player1Id : player2Id;
   }
+
+  updateWins = (ws: WebSocket, db: memoryDB) => {
+    db.incrementUserWins(ws);
+    const data: { name: string; wins: number }[] = [];
+    const result: HandlerReturnType = [];
+    const webSockets = Array.from(db.getAllWS());
+    webSockets.forEach((ws) => {
+      const user = db.getUser(ws);
+      if (user) {
+        data.push({ name: user.name, wins: user.wins });
+      }
+    });
+    const response: Request = {
+      type: 'update_winners',
+      data: JSON.stringify(data),
+      id: 0,
+    };
+    webSockets.forEach((ws) => {
+      result.push({ ws, responses: [response] });
+    });
+    return result;
+  };
 
   createGameResponses = () => {
     const ids = Array.from(this.players.keys());
@@ -169,9 +192,8 @@ class Game {
     return attackResponses;
   };
 
-  attack = (indexPlayer: number, x: number, y: number) => {
+  attack = (db: memoryDB, indexPlayer: number, x: number, y: number) => {
     const result: HandlerReturnType = [];
-
     if (this.turn === indexPlayer) {
       const opponentId = Array.from(this.players.keys()).find(
         (id) => id !== indexPlayer
@@ -215,6 +237,10 @@ class Game {
             },
             { ws: opponent.ws, responses: [...attackResponses, turnResponse] }
           );
+          if (shouldFinish) {
+            const winnersResponses = this.updateWins(currentPlayer.ws, db);
+            result.push(...winnersResponses);
+          }
         }
       }
     }

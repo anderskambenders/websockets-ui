@@ -1,18 +1,12 @@
 import memoryDB from '../../memory-database/memoryDB';
 import { Room } from './room';
 import { Request } from '../../types/types';
-import type { AvailableRooms } from '../../types/types';
+import type {
+  AvailableRooms,
+  Handler,
+  HandlerReturnType,
+} from '../../types/types';
 import type { WebSocket } from 'ws';
-
-export type HandlerReturnType = {
-  ws: WebSocket;
-  responses: Request[];
-}[];
-
-export type Handler = (
-  req: Request,
-  ws: WebSocket
-) => HandlerReturnType | Promise<HandlerReturnType>;
 
 export class RoomsService {
   private _rooms: Map<number, Room>;
