@@ -39,7 +39,7 @@ export type AvailableRooms = {
   }[];
 }[];
 
-interface ShipRequest {
+export type ShipsRequest = {
   position: {
     x: number;
     y: number;
@@ -47,4 +47,4 @@ interface ShipRequest {
   direction: boolean;
   length: number;
   type: 'small' | 'medium' | 'large' | 'huge';
-}
+}[];
