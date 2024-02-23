@@ -38,3 +38,13 @@ export type AvailableRooms = {
     index: number;
   }[];
 }[];
+
+interface ShipRequest {
+  position: {
+    x: number;
+    y: number;
+  };
+  direction: boolean;
+  length: number;
+  type: 'small' | 'medium' | 'large' | 'huge';
+}
