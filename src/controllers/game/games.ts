@@ -29,14 +29,12 @@ export class GamesController {
   addShips: Handler = (req) => {
     const { gameId, indexPlayer, ships }: AddShips = JSON.parse(req.data);
     const game = this.games.get(gameId);
-
     return game?.setShips(indexPlayer, ships) ?? [];
   };
 
   attack: Handler = (req) => {
     const { gameId, indexPlayer, x, y }: AttackRequest = JSON.parse(req.data);
     const game = this.games.get(gameId);
-
     return game?.attack(this.db, indexPlayer, x, y) ?? [];
   };
 }

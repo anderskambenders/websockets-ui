@@ -11,9 +11,9 @@ class Controller {
   private games: GamesController;
 
   constructor(db: memoryDB) {
-    this.rooms = new RoomsService(db);
-    this.registration = new Registration(db, this.rooms);
     this.games = new GamesController(db);
+    this.rooms = new RoomsService(db, this.games);
+    this.registration = new Registration(db, this.rooms);
   }
 
   createRoutes = () => {
@@ -32,6 +32,10 @@ class Controller {
         (req: Request, ws: WebSocket) => this.games.addShips(req, ws),
       ],
       ['attack', (req: Request, ws: WebSocket) => this.games.attack(req, ws)],
+      [
+        'add_ships',
+        (req: Request, ws: WebSocket) => this.games.addShips(req, ws),
+      ],
     ];
 
     const res = new Map();

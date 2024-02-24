@@ -7,16 +7,19 @@ import type {
   HandlerReturnType,
 } from '../../types/types';
 import type { WebSocket } from 'ws';
+import { GamesController } from '../game/games';
 
 export class RoomsService {
-  private _rooms: Map<number, Room>;
-  private _roomId: number;
+  private rooms: Map<number, Room>;
+  private roomId: number;
+  private games: GamesController;
   private db: memoryDB;
 
-  constructor(db: memoryDB) {
+  constructor(db: memoryDB, games: GamesController) {
     this.db = db;
-    this._rooms = new Map();
-    this._roomId = 1;
+    this.rooms = new Map();
+    this.roomId = 1;
+    this.games = games;
   }
 
   createRoom: Handler = (_, ws) => {
@@ -41,13 +44,41 @@ export class RoomsService {
       room.addPlayer1(player1);
     }
 
-    this._rooms.set(this._roomId++, room);
+    this.rooms.set(this.roomId++, room);
+  };
+
+  addUserToRoom: Handler = (req, ws) => {
+    const { indexRoom }: { indexRoom: number } = JSON.parse(req.data);
+    const user = this.db.getUser(ws);
+    const room = this.rooms.get(indexRoom);
+    const result: HandlerReturnType = [];
+    if (room && user) {
+      room.setPlayer(user);
+      const { player1, player2 } = room.players;
+      if (player1 && player2) {
+        const gameResp = this.games.createGame(
+          player1.ws,
+          player2.ws,
+          player1.index,
+          player2.index
+        );
+        const player1Resp = gameResp.get(player1.index);
+        const player2Resp = gameResp.get(player2.index);
+        if (player1Resp && player2Resp) {
+          const updateResp = this.updateRoom();
+          result.push({ ws: player1.ws, responses: [player1Resp, updateResp] });
+          result.push({ ws: player2.ws, responses: [player2Resp, updateResp] });
+        }
+      }
+    }
+
+    return result;
   };
 
   updateRoom = () => {
     const data: AvailableRooms = [];
 
-    this._rooms.forEach((room, id) => {
+    this.rooms.forEach((room, id) => {
       const isFull = room.isFullRoom();
       const player = room.getActivePlayer();
 
@@ -75,6 +106,6 @@ export class RoomsService {
   };
 
   getSize = () => {
-    return this._rooms.size;
+    return this.rooms.size;
   };
 }
