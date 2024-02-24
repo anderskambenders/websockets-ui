@@ -48,3 +48,16 @@ export type ShipsRequest = {
   length: number;
   type: 'small' | 'medium' | 'large' | 'huge';
 }[];
+
+export interface AddShips {
+  gameId: number;
+  ships: ShipsRequest;
+  indexPlayer: number;
+}
+
+export interface AttackRequest {
+  gameId: number;
+  x: number;
+  y: number;
+  indexPlayer: number;
+}
