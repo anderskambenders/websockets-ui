@@ -35,7 +35,6 @@ class memoryDB {
 
   incrementUserWins = (ws: WebSocket) => {
     const user = this.getUser(ws);
-
     if (user) {
       user.wins++;
     }

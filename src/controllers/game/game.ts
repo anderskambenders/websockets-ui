@@ -4,6 +4,7 @@ import Ship from '../ships';
 import { ShipsRequest } from '../../types/types';
 import type { HandlerReturnType } from '../../types/types';
 import memoryDB from '../../memory-database/memoryDB';
+import updateWins from './updateWins';
 
 class Game {
   private id: number;
@@ -32,28 +33,6 @@ class Game {
     ]);
     this.turn = Math.random() > 0.5 ? player1Id : player2Id;
   }
-
-  updateWins = (ws: WebSocket, db: memoryDB) => {
-    db.incrementUserWins(ws);
-    const data: { name: string; wins: number }[] = [];
-    const result: HandlerReturnType = [];
-    const webSockets = Array.from(db.getAllWS());
-    webSockets.forEach((ws) => {
-      const user = db.getUser(ws);
-      if (user) {
-        data.push({ name: user.name, wins: user.wins });
-      }
-    });
-    const response: Request = {
-      type: 'update_winners',
-      data: JSON.stringify(data),
-      id: 0,
-    };
-    webSockets.forEach((ws) => {
-      result.push({ ws, responses: [response] });
-    });
-    return result;
-  };
 
   createGameResponses = () => {
     const ids = Array.from(this.players.keys());
@@ -239,7 +218,7 @@ class Game {
             { ws: opponent.ws, responses: [...attackResponses, turnResponse] }
           );
           if (shouldFinish) {
-            const winnersResponses = this.updateWins(currentPlayer.ws, db);
+            const winnersResponses = updateWins(currentPlayer.ws, db);
             result.push(...winnersResponses);
           }
         }
