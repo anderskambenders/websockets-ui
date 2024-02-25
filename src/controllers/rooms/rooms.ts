@@ -6,10 +6,9 @@ import type {
   Handler,
   HandlerReturnType,
 } from '../../types/types';
-import type { WebSocket } from 'ws';
 import { GamesController } from '../game/games';
 
-export class RoomsService {
+export class Rooms {
   private rooms: Map<number, Room>;
   private roomId: number;
   private games: GamesController;
@@ -24,7 +23,12 @@ export class RoomsService {
 
   createRoom: Handler = (_, ws) => {
     const webSockets = this.db.getAllWS();
-    this.addRoom(ws);
+    const room = new Room();
+    const player1 = this.db.getUser(ws);
+    if (player1) {
+      room.addPlayer(0, player1);
+    }
+    this.rooms.set(this.roomId++, room);
     const updatedRoom = this.updateRoom();
     const responses = [updatedRoom];
     const result: HandlerReturnType = [];
@@ -34,15 +38,6 @@ export class RoomsService {
     }
 
     return result;
-  };
-
-  addRoom = (ws: WebSocket) => {
-    const room = new Room();
-    const player1 = this.db.getUser(ws);
-    if (player1) {
-      room.addPlayer(0, player1);
-    }
-    this.rooms.set(this.roomId++, room);
   };
 
   addUserToRoom: Handler = (req, ws) => {
@@ -75,11 +70,9 @@ export class RoomsService {
 
   updateRoom = () => {
     const data: AvailableRooms = [];
-
     this.rooms.forEach((room, id) => {
       const isFull = room.isFullRoom();
       const player = room.getActivePlayer();
-
       if (!isFull && player) {
         const dataItem = {
           roomId: id,
@@ -93,13 +86,11 @@ export class RoomsService {
         data.push(dataItem);
       }
     });
-
     const result: Request = {
       type: 'update_room',
       data: JSON.stringify(data),
       id: 0,
     };
-
     return result;
   };
 
@@ -107,3 +98,5 @@ export class RoomsService {
     return this.rooms.size;
   }
 }
+
+export default Rooms;

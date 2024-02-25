@@ -101,7 +101,13 @@ class Game {
         data,
         id: 0,
       };
-      const turnResponse = this.getTurnResp();
+      const turnResponse = {
+        type: 'turn',
+        data: JSON.stringify({
+          currentPlayer: this.turn,
+        }),
+        id: 0,
+      };
       const responses = [startResponse, turnResponse];
       result.push({ ws: player.ws, responses });
     });
@@ -111,21 +117,10 @@ class Game {
 
   switchTurn = () => {
     const turn = Array.from(this.players.keys()).find((id) => id !== this.turn);
-    if (turn) {
-      this.turn = turn;
+    if (!turn) {
+      return;
     }
-  };
-
-  getTurnResp = () => {
-    const data = JSON.stringify({
-      currentPlayer: this.turn,
-    });
-    const response: Request = {
-      type: 'turn',
-      data,
-      id: 0,
-    };
-    return response;
+    this.turn = turn;
   };
 
   createAttackResponse = (
@@ -229,7 +224,13 @@ class Game {
           if (status.attackStatus === 'miss') {
             this.switchTurn();
           }
-          const turnResponse = this.getTurnResp();
+          const turnResponse = {
+            type: 'turn',
+            data: JSON.stringify({
+              currentPlayer: this.turn,
+            }),
+            id: 0,
+          };
           result.push(
             {
               ws: currentPlayer.ws,

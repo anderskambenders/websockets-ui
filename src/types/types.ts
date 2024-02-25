@@ -3,7 +3,7 @@ import type { WebSocket } from 'ws';
 export interface Request {
   type: string;
   data: string;
-  id: 0;
+  id: number;
 }
 
 export type Handler = (

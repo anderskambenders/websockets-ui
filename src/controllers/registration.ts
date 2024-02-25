@@ -1,14 +1,14 @@
 import memoryDB from '../memory-database/memoryDB';
 import { Request } from '../types/types';
 import { RegistrationData } from '../types/types';
-import type { RoomsService } from './rooms/rooms';
+import type { Rooms } from './rooms/rooms';
 import type { WebSocket } from 'ws';
 
 class Registration {
   private db: memoryDB;
-  private rooms: RoomsService;
+  private rooms: Rooms;
 
-  constructor(db: memoryDB, rooms: RoomsService) {
+  constructor(db: memoryDB, rooms: Rooms) {
     this.db = db;
     this.rooms = rooms;
   }

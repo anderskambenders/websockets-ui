@@ -11,7 +11,6 @@ class Room {
     if (this.isFullRoom() || this.gamers[index]) {
       return null;
     }
-
     this.gamers[index] = player;
     return this.gamers[index];
   }

@@ -2,17 +2,17 @@ import memoryDB from '../memory-database/memoryDB';
 import { Request } from '../types/types';
 import { GamesController } from './game/games';
 import Registration from './registration';
-import { RoomsService } from './rooms/rooms';
+import Rooms from './rooms/rooms';
 import type { WebSocket } from 'ws';
 
 class Controller {
   private registration: Registration;
-  private rooms: RoomsService;
+  private rooms: Rooms;
   private games: GamesController;
 
   constructor(db: memoryDB) {
     this.games = new GamesController(db);
-    this.rooms = new RoomsService(db, this.games);
+    this.rooms = new Rooms(db, this.games);
     this.registration = new Registration(db, this.rooms);
   }
 

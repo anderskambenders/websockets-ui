@@ -13,7 +13,6 @@ const startWebSocketServer = () => {
   const db = memoryDB.memoryDB;
   const services = new Controller(db);
   const controller = services.createRoutes();
-
   wss.on('connection', function connection(ws) {
     ws.on('error', console.error);
     ws.on('close', () => deleteUser(ws, db));
@@ -22,11 +21,8 @@ const startWebSocketServer = () => {
       try {
         const request: Request = JSON.parse(data.toString());
         const handler = handleRequest(request.type, controller);
-
         if (handler) {
           const WSResponses = await handler(request, ws);
-          console.log(request, this);
-
           WSResponses.forEach(
             (wsWithResponse: { ws: WebSocket; responses: Request[] }) => {
               wsWithResponse.responses.forEach((response) => {
