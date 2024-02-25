@@ -31,6 +31,10 @@ class Controller {
         'add_ships',
         (req: Request, ws: WebSocket) => this.games.addShips(req, ws),
       ],
+      [
+        'add_user_to_room',
+        (req: Request, ws: WebSocket) => this.rooms.addUserToRoom(req, ws),
+      ],
       ['attack', (req: Request, ws: WebSocket) => this.games.attack(req, ws)],
       [
         'add_ships',

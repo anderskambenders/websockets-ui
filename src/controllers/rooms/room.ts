@@ -1,41 +1,45 @@
 import { User } from '../../types/types';
 
-export class Room {
-  private gamer1: null | User;
-  private gamer2: null | User;
+class Room {
+  private gamers: [null | User, null | User];
 
   constructor() {
-    this.gamer1 = null;
-    this.gamer2 = null;
+    this.gamers = [null, null];
   }
 
-  addPlayer1 = (player: User) => {
-    this.gamer1 = player;
-    return this.gamer1;
-  };
-
-  addPlayer2 = (player: User) => {
-    this.gamer2 = player;
-    return this.gamer2;
-  };
-
-  setPlayer = (player: User) => {
-    const activePlayer = this.getActivePlayer();
-    if (this.isFullRoom() || activePlayer?.index === player.index) {
-      return;
+  addPlayer(index: number, player: User) {
+    if (this.isFullRoom() || this.gamers[index]) {
+      return null;
     }
 
-    return this.gamer1 ? this.addPlayer2(player) : this.addPlayer1(player);
-  };
+    this.gamers[index] = player;
+    return this.gamers[index];
+  }
 
-  isFullRoom = () => this.gamer1 && this.gamer2;
+  setPlayer(player: User) {
+    const activePlayer = this.getActivePlayer();
+    if (this.isFullRoom() || activePlayer?.index === player.index) {
+      return null;
+    }
 
-  getActivePlayer = () => this.gamer1 || this.gamer2;
+    const index = this.gamers[0] ? 1 : 0;
+    return this.addPlayer(index, player);
+  }
+
+  isFullRoom() {
+    return this.gamers[0] && this.gamers[1];
+  }
+
+  getActivePlayer() {
+    return this.gamers[0] || this.gamers[1];
+  }
 
   get players() {
     return {
-      player1: this.gamer1,
-      player2: this.gamer2,
+      player1: this.gamers[0],
+      player2: this.gamers[1],
     };
   }
 }
+
+export default Room;

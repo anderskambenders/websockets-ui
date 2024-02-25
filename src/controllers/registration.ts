@@ -22,7 +22,7 @@ class Registration {
   registerUser = (req: Request, ws: WebSocket) => {
     const user = this.createUser(req, ws);
     const responses: Request[] = [user];
-    const size = this.rooms.getSize();
+    const size = this.rooms.size;
     console.log(req, ws);
     if (size) {
       responses.push(this.rooms.updateRoom());

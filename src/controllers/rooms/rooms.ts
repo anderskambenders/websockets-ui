@@ -1,5 +1,5 @@
 import memoryDB from '../../memory-database/memoryDB';
-import { Room } from './room';
+import Room from './room';
 import { Request } from '../../types/types';
 import type {
   AvailableRooms,
@@ -39,11 +39,9 @@ export class RoomsService {
   addRoom = (ws: WebSocket) => {
     const room = new Room();
     const player1 = this.db.getUser(ws);
-
     if (player1) {
-      room.addPlayer1(player1);
+      room.addPlayer(0, player1);
     }
-
     this.rooms.set(this.roomId++, room);
   };
 
@@ -105,7 +103,7 @@ export class RoomsService {
     return result;
   };
 
-  getSize = () => {
+  get size() {
     return this.rooms.size;
-  };
+  }
 }
