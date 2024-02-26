@@ -7,12 +7,12 @@ class Ship {
   private shipId: number;
 
   constructor(
-    pos: { x: number; y: number },
+    position: { x: number; y: number },
     length: number,
     direction: boolean,
     shipId: number
   ) {
-    this.position = pos;
+    this.position = position;
     this.coordinates = this.calculateCoordinates(length, direction);
     this.hp = this.coordinates.length;
     this.direction = direction;

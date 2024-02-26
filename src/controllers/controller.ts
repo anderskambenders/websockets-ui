@@ -16,29 +16,33 @@ class Controller {
     this.registration = new Registration(db, this.rooms);
   }
 
-  createRoutes = () => {
+  handleRequest = () => {
     const routes = [
       [
         'reg',
-        (req: Request, ws: WebSocket) =>
-          this.registration.registerUser(req, ws),
+        (request: Request, ws: WebSocket) =>
+          this.registration.registerUser(request, ws),
       ],
       [
         'create_room',
-        (req: Request, ws: WebSocket) => this.rooms.createRoom(req, ws),
+        (request: Request, ws: WebSocket) => this.rooms.createRoom(request, ws),
       ],
       [
         'add_ships',
-        (req: Request, ws: WebSocket) => this.games.addShips(req, ws),
+        (request: Request, ws: WebSocket) => this.games.addShips(request, ws),
       ],
       [
         'add_user_to_room',
-        (req: Request, ws: WebSocket) => this.rooms.addUserToRoom(req, ws),
+        (request: Request, ws: WebSocket) =>
+          this.rooms.addUserToRoom(request, ws),
       ],
-      ['attack', (req: Request, ws: WebSocket) => this.games.attack(req, ws)],
+      [
+        'attack',
+        (request: Request, ws: WebSocket) => this.games.attack(request, ws),
+      ],
       [
         'add_ships',
-        (req: Request, ws: WebSocket) => this.games.addShips(req, ws),
+        (request: Request, ws: WebSocket) => this.games.addShips(request, ws),
       ],
     ];
 

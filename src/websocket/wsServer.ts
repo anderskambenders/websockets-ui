@@ -12,7 +12,7 @@ const startWebSocketServer = () => {
   const wss = new WebSocketServer({ server });
   const db = memoryDB.memoryDB;
   const services = new Controller(db);
-  const controller = services.createRoutes();
+  const controller = services.handleRequest();
   wss.on('connection', function connection(ws) {
     ws.on('error', console.error);
     ws.on('close', () => deleteUser(ws, db));
