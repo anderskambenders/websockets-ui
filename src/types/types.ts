@@ -9,9 +9,9 @@ export interface Request {
 export type Handler = (
   req: Request,
   ws: WebSocket
-) => HandlerReturnType | Promise<HandlerReturnType>;
+) => HandlerReturn | Promise<HandlerReturn>;
 
-export type HandlerReturnType = {
+export type HandlerReturn = {
   ws: WebSocket;
   responses: Request[];
 }[];

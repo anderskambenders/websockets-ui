@@ -17,7 +17,6 @@ const startWebSocketServer = () => {
     ws.on('error', console.error);
     ws.on('close', () => deleteUser(ws, db));
     ws.on('message', async (data) => {
-      console.log('received: %s', data);
       try {
         const request: Request = JSON.parse(data.toString());
         const handler = handleRequest(request.type, controller);

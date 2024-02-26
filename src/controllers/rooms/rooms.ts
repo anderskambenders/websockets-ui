@@ -1,11 +1,7 @@
 import memoryDB from '../../memory-database/memoryDB';
 import Room from './room';
 import { Request } from '../../types/types';
-import type {
-  AvailableRooms,
-  Handler,
-  HandlerReturnType,
-} from '../../types/types';
+import type { AvailableRooms, Handler, HandlerReturn } from '../../types/types';
 import { GamesController } from '../game/games';
 
 export class Rooms {
@@ -31,7 +27,7 @@ export class Rooms {
     this.rooms.set(this.roomId++, room);
     const updatedRoom = this.updateRoom();
     const responses = [updatedRoom];
-    const result: HandlerReturnType = [];
+    const result: HandlerReturn = [];
 
     for (const ws of webSockets) {
       result.push({ ws, responses });
@@ -44,7 +40,7 @@ export class Rooms {
     const { indexRoom }: { indexRoom: number } = JSON.parse(req.data);
     const user = this.db.getUser(ws);
     const room = this.rooms.get(indexRoom);
-    const result: HandlerReturnType = [];
+    const result: HandlerReturn = [];
     if (room && user) {
       room.setPlayer(user);
       const { player1, player2 } = room.players;

@@ -3,6 +3,7 @@ import { Request } from '../types/types';
 import { RegistrationData } from '../types/types';
 import type { Rooms } from './rooms/rooms';
 import type { WebSocket } from 'ws';
+import { winsResp } from './game/updateWins';
 
 class Registration {
   private db: memoryDB;
@@ -23,11 +24,12 @@ class Registration {
     const user = this.createUser(req, ws);
     const responses: Request[] = [user];
     const size = this.rooms.size;
-    console.log(req, ws);
     if (size) {
       responses.push(this.rooms.updateRoom());
     }
-    const result = [{ ws, responses }];
+    const updateWinners = winsResp(this.db);
+
+    const result = [{ ws, responses }, ...updateWinners];
     return result;
   };
 

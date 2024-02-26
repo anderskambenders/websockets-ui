@@ -2,9 +2,9 @@ import { WebSocket } from 'ws';
 import { Request } from '../../types/types';
 import Ship from '../ships';
 import { ShipsRequest } from '../../types/types';
-import type { HandlerReturnType } from '../../types/types';
+import type { HandlerReturn } from '../../types/types';
 import memoryDB from '../../memory-database/memoryDB';
-import updateWins from './updateWins';
+import { updateWins } from './updateWins';
 
 class Game {
   private id: number;
@@ -69,7 +69,7 @@ class Game {
   };
 
   startGame = () => {
-    const result: HandlerReturnType = [];
+    const result: HandlerReturn = [];
     this.players.forEach((player) => {
       const data = JSON.stringify({
         ships: player.shipsReq,
@@ -167,7 +167,7 @@ class Game {
   };
 
   attack = (db: memoryDB, indexPlayer: number, x: number, y: number) => {
-    const result: HandlerReturnType = [];
+    const result: HandlerReturn = [];
     if (this.turn === indexPlayer) {
       const opponentId = Array.from(this.players.keys()).find(
         (id) => id !== indexPlayer

@@ -5,13 +5,17 @@ import memoryDB from '../../memory-database/memoryDB';
 
 export class GamesController {
   private id: number;
-  private games: Map<number, Game>;
+  public games: Map<number, Game>;
   private db: memoryDB;
 
   constructor(db: memoryDB) {
     this.games = new Map();
     this.id = 1;
     this.db = db;
+  }
+
+  get gamesId() {
+    return this.id;
   }
 
   createGame = (
@@ -36,5 +40,19 @@ export class GamesController {
     const { gameId, indexPlayer, x, y }: AttackRequest = JSON.parse(req.data);
     const game = this.games.get(gameId);
     return game?.attack(this.db, indexPlayer, x, y) ?? [];
+  };
+
+  randomAttack: Handler = (req) => {
+    const { gameId, indexPlayer } = JSON.parse(req.data);
+    return (
+      this.games
+        .get(gameId)
+        ?.attack(
+          this.db,
+          indexPlayer,
+          Math.floor(Math.random() * 10),
+          Math.floor(Math.random() * 10)
+        ) ?? []
+    );
   };
 }

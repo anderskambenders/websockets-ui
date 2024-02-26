@@ -44,6 +44,11 @@ class Controller {
         'add_ships',
         (request: Request, ws: WebSocket) => this.games.addShips(request, ws),
       ],
+      [
+        'randomAttack',
+        (request: Request, ws: WebSocket) =>
+          this.games.randomAttack(request, ws),
+      ],
     ];
 
     const res = new Map();

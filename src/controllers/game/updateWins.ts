@@ -1,11 +1,10 @@
 import memoryDB from '../../memory-database/memoryDB';
-import { HandlerReturnType } from '../../types/types';
+import { HandlerReturn } from '../../types/types';
 import WebSocket from 'ws';
 
-const updateWins = (ws: WebSocket, db: memoryDB) => {
-  db.incrementUserWins(ws);
+export const winsResp = (db: memoryDB) => {
   const data: { name: string; wins: number }[] = [];
-  const result: HandlerReturnType = [];
+  const result: HandlerReturn = [];
   const webSockets = Array.from(db.getAllWS());
   webSockets.forEach((ws) => {
     const user = db.getUser(ws);
@@ -24,4 +23,7 @@ const updateWins = (ws: WebSocket, db: memoryDB) => {
   return result;
 };
 
-export default updateWins;
+export const updateWins = (ws: WebSocket, db: memoryDB) => {
+  db.incrementUserWins(ws);
+  return winsResp(db);
+};
