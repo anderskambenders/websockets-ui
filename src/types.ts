@@ -43,3 +43,33 @@ export interface Room {
     roomId: string;
     roomUsers: RoomUser[];
 }
+
+export interface Game {
+    gameId: string;
+    gameUsers: {
+        name: string;
+        index: PlayerId;
+        ships?: Ship[];
+        field?: FieldCell[][];
+        correctShotsNum?: number;
+    }[];
+    turn?: PlayerId;
+}
+
+export type PlayerId = 0 | 1;
+
+export interface Ship {
+    position: Position;
+    direction: boolean;
+    length: number;
+    type: "small" | "medium" | "large" | "huge";
+}
+
+export type FieldCell = {
+    value: 0 | 1;
+    isAttacked: boolean;
+    next?: Position;
+    prev?: Position;
+};
+
+export type Position = { x: number; y: number };
