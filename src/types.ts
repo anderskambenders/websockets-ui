@@ -36,3 +36,10 @@ export interface WebsocketResponse {
     id: 0;
     type: (typeof RESPONSE_TYPE)[keyof typeof RESPONSE_TYPE];
 }
+
+export type RoomUser = Required<Omit<User, "password">>;
+
+export interface Room {
+    roomId: string;
+    roomUsers: RoomUser[];
+}
