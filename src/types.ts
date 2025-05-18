@@ -73,3 +73,10 @@ export type FieldCell = {
 };
 
 export type Position = { x: number; y: number };
+
+export type AttackStatus = 'miss' | 'shot' | 'killed';
+
+export interface Winner {
+  name: string;
+  wins: number;
+}

@@ -7,6 +7,7 @@ import {
   RESPONSE_TYPE,
   PlayerId,
 } from '../types';
+import handleAttack from './attack';
 import getRegistrationResp from './registration';
 import updateRoom from './updateRoom';
 import { getWsEntryIndexByKey, wsConnections } from './utils';
