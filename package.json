@@ -1,30 +1,34 @@
 {
-    "name": "ws_task",
-    "version": "1.0.0",
-    "description": "Template for the WebSocket remote control task",
-    "main": "index.ts",
-    "type": "module",
-    "scripts": {
-        "start": "tsx ./index.ts",
-        "start:dev": "tsx watch ./index.ts"
-    },
-    "author": "Andrei Auchynnikau",
-    "keywords": [],
-    "license": "ISC",
-    "devDependencies": {
-        "@types/node": "^22.15.18",
-        "@types/ws": "^8.18.1",
-        "@typescript-eslint/eslint-plugin": "^8.32.1",
-        "@typescript-eslint/parser": "^8.32.1",
-        "eslint": "^9.27.0",
-        "eslint-config-prettier": "^10.1.5",
-        "eslint-plugin-prettier": "^5.4.0",
-        "nodemon": "^2.0.16",
-        "prettier": "^3.5.3",
-        "tsx": "^4.19.4",
-        "typescript": "^5.8.3"
-    },
-    "dependencies": {
-        "ws": "^8.8.0"
-    }
+  "name": "ws_task",
+  "version": "1.0.0",
+  "description": "Template for the WebSocket remote control task",
+  "main": "index.ts",
+  "type": "module",
+  "scripts": {
+    "start": "tsx ./index.ts",
+    "start:dev": "tsx watch ./index.ts",
+    "lint": "eslint \"src/**/*.{js,mjs,cjs,ts,mts,jsx,tsx}\"",
+    "lint:fix": "eslint \"src/**/*.{js,mjs,cjs,ts,mts,jsx,tsx}\" --fix",
+    "format:fix": "prettier . --write",
+    "format:check": "prettier ./src -c"
+  },
+  "author": "Andrei Auchynnikau",
+  "keywords": [],
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^22.15.18",
+    "@types/ws": "^8.18.1",
+    "@typescript-eslint/eslint-plugin": "^8.32.1",
+    "@typescript-eslint/parser": "^8.32.1",
+    "eslint": "^9.27.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.4.0",
+    "nodemon": "^2.0.16",
+    "prettier": "^3.5.3",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "ws": "^8.8.0"
+  }
 }

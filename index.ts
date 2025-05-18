@@ -9,6 +9,6 @@ httpServer.listen(HTTP_PORT);
 
 startWebsocketServer(WEBSOCKET_PORT);
 
-process.on("uncaughtException", (error) => {
-    if (error instanceof Error) console.error(error.message);
+process.on('uncaughtException', (error) => {
+  if (error instanceof Error) console.error(error.message);
 });
