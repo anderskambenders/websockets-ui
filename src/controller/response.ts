@@ -7,7 +7,7 @@ import {
   RESPONSE_TYPE,
   PlayerId,
 } from '../types';
-import handleAttack from './attack';
+import handleAttack, { BOT_NAME } from './attack';
 import getRegistrationResp from './registration';
 import updateRoom from './updateRoom';
 import { getWsEntryIndexByKey, wsConnections } from './utils';
@@ -99,6 +99,50 @@ const getResponse = (request: WebsocketRequest, name?: string) => {
         if (data.indexPlayer !== Games.getTurn(gameId)) return;
 
         handleAttack(gameId, indexPlayer, x, y);
+      },
+      [REQUEST_TYPE.randomAttack]: ({
+        request,
+      }: {
+        request: WebsocketRequest;
+      }) => {
+        const { gameId, indexPlayer } = JSON.parse(request.data);
+
+        let x: number = 0;
+        let y: number = 0;
+
+        const players = Games.getGamePlayers(gameId);
+        const opponentField = players[+!indexPlayer].field;
+
+        do {
+          x = Math.floor(Math.random() * 10);
+          y = Math.floor(Math.random() * 10);
+        } while (opponentField && opponentField[y][x].isAttacked);
+
+        handleAttack(gameId, indexPlayer, x, y);
+      },
+      [REQUEST_TYPE.singlePlay]: ({ name = '' }: { name?: string }) => {
+        const gameId = Games.createGame([
+          { name, index: 0 },
+          { name: BOT_NAME, index: 1 },
+        ]);
+        const ships = JSON.parse(
+          '[{"position":{"x":4,"y":2},"direction":false,"type":"huge","length":4},{"position":{"x":2,"y":6},"direction":false,"type":"large","length":3},{"position":{"x":7,"y":6},"direction":true,"type":"large","length":3},{"position":{"x":3,"y":8},"direction":false,"type":"medium","length":2},{"position":{"x":0,"y":5},"direction":true,"type":"medium","length":2},{"position":{"x":0,"y":2},"direction":false,"type":"medium","length":2},{"position":{"x":8,"y":0},"direction":true,"type":"small","length":1},{"position":{"x":1,"y":0},"direction":true,"type":"small","length":1},{"position":{"x":3,"y":0},"direction":true,"type":"small","length":1},{"position":{"x":2,"y":4},"direction":true,"type":"small","length":1}]'
+        );
+        Games.shouldStart(gameId, ships, 1);
+        const players = Games.getGamePlayers(gameId);
+
+        players.forEach((player) => {
+          if (player.name !== BOT_NAME) {
+            const index = getWsEntryIndexByKey('userName', player.name);
+            wsConnections[index].ws.send(
+              JSON.stringify({
+                type: RESPONSE_TYPE.createGame,
+                data: JSON.stringify({ gameId, idPlayer: player.index }),
+                id: 0,
+              })
+            );
+          }
+        });
       },
     };
 
